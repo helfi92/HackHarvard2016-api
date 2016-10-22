@@ -17,6 +17,7 @@ db.then(function(connection) {
       }
 
       if (result[0].password.toString() === password.toString()) {
+        req.session.loggedIn = true;
         res.status(200).send('User Logged In');
       } else {
         res.status(500).send('something blew up');
@@ -36,7 +37,7 @@ db.then(function(connection) {
       if (err) {
         throw err;
       }
-
+      req.session.loggedIn = true;
       res.send(newUser);
     });
   });

@@ -21,23 +21,27 @@ db.then(function(connection) {
     var username = req.body.username;
     var company = req.body.company;
 
-    userCollection.find({ username : username }).toArray(function(err, result) {
-      if (err) {
-        throw err;
-      }
-
-      var index = result[0].companies.indexOf(company);
-
-      index > -1 ? result[0].companies.splice(index, 1) :
-        result[0].companies.push(company);
-
-      userCollection.update({username:username}, {$set:{companies:result[0].companies}}, function (err, data) {
+    if(!company) {
+      res.send('no company provided');
+    } else {
+      userCollection.find({ username : username }).toArray(function(err, result) {
         if (err) {
           throw err;
         }
-        res.send(data);
+
+        var index = result[0].companies.indexOf(company);
+
+        index > -1 ? result[0].companies.splice(index, 1) :
+          result[0].companies.push(company);
+
+        userCollection.update({username:username}, {$set:{companies:result[0].companies}}, function (err, data) {
+          if (err) {
+            throw err;
+          }
+          res.send(data);
+        });
       });
-    });
+    }
   });
 
   /* Delete user or Delete all if no username is provided*/
