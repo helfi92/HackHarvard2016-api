@@ -16,23 +16,6 @@ db.then(function(connection) {
     });
   });
 
-  /* Create new User */
-  router.post('/', function (req, res, next) {
-    var username = req.body.username;
-    var password = req.body.password;
-    // var newUser2 = new User({ username: username, password: password, companies: companies });
-    var newUser = { username: username, password: password, companies: []};
-
-    // Save to DB and return new user
-    userCollection.insert(newUser, function (err, data) {
-      if (err) {
-        throw err;
-      }
-
-      res.send(newUser);
-    });
-  });
-
   /* Update user company list */
   router.put('/', function (req, res, next) {
     var username = req.body.username;
@@ -44,11 +27,9 @@ db.then(function(connection) {
       }
 
       var index = result[0].companies.indexOf(company);
-      if (index > -1) {
-        result[0].companies.splice(index, 1);
-      } else {
+
+      index > -1 ? result[0].companies.splice(index, 1) :
         result[0].companies.push(company);
-      }
 
       userCollection.update({username:username}, {$set:{companies:result[0].companies}}, function (err, data) {
         if (err) {
